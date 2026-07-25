@@ -5,6 +5,7 @@ const createAuction=async (req,res)=>{
         const auction={
             'playerName':data.playerName,
             'startingPrice':data.startingPrice,
+            'status':data.status,
             'startTime':data.startTime,
             'endTime':data.endTime,
             'sellerId':req.user.id

@@ -33,10 +33,24 @@ const createAuctionTables= async ()=>{
         `
     )
 }
+const createBidTable=async ()=>{
+    await pool.query(
+        `
+        CREATE TABLE IF NOT EXISTS bids(
+        id SERIAL PRIMARY KEY,
+        auction_id INTEGER NOT NULL REFERENCES auctions(id) ON DELETE CASCADE,
+        bidder_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        amount DECIMAL(10,2) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        `
+    )
+}
 const createTables = async () => {
     try {
         await createUserTable();
         await createAuctionTables();
+        await createBidTable()
         console.log("All tables created successfully");
     } catch (err) {
         console.error(err);

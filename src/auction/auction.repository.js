@@ -2,10 +2,10 @@ const pool = require('../shared/database/postgres')
 
 const createAuction= async (auction)=>{
     const result=await pool.query(
-        `INSERT INTO auctions(player_name,starting_price,current_price,start_time,end_time,seller_id)
-        VALUES($1,$2,$3,$4,$5,$6)
+        `INSERT INTO auctions(player_name,starting_price,current_price,start_time,end_time,seller_id,status)
+        VALUES($1,$2,$3,$4,$5,$6,$7)
         RETURNING id,player_name,starting_price,current_price,start_time,end_time,seller_id,created_at`,
-        [auction.playerName,auction.startingPrice,auction.currentPrice,auction.startTime,auction.endTime,auction.sellerId]
+        [auction.playerName,auction.startingPrice,auction.currentPrice,auction.startTime,auction.endTime,auction.sellerId,auction.status]
     )
     return result.rows[0]
 }
@@ -53,4 +53,16 @@ const deleteAuction=async (id)=>{
     )
     return result.rows[0]
 }
-module.exports={deleteAuction,updateAuction,findAllAuctions,findAuctionById,createAuction}
+const updateCurrentPrice=async (auctionId,currentPrice)=>{
+    const result=await pool.query(
+        `
+        UPDATE auctions
+        SET current_price = $1
+        WHERE id = $2
+        RETURNING *;
+        `,
+        [currentPrice, auctionId]
+    );
+    return result.rows[0];
+};
+module.exports={deleteAuction,updateAuction,findAllAuctions,findAuctionById,createAuction,updateCurrentPrice}
