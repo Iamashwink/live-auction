@@ -1,8 +1,14 @@
 require('dotenv').config()
 
-
-const pool = require("./shared/database/postgres");
+const http=require('http')
+const pool=require("./shared/database/postgres");
+const {setIO}=require("./socket/socketManager");
 const app=require('./app.js')
+const initializeSocket=require('./socket/socket.js')
+const server=http.createServer(app)
+
+const io=initializeSocket(server)
+setIO(io)
 PORT=process.env.PORT || 3000
 
 
@@ -14,8 +20,8 @@ async function start()
         console.log("Database Connected...")
         
 
-        app.listen(PORT,()=>{
-            console.log(`Server Running on port ${PORT}`)
+        server.listen(PORT,()=>{
+            console.log(`Server Running  on port ${PORT}`)
         })
     }
     catch(err)
